@@ -2,43 +2,7 @@ import { Locator, Page, expect } from "@playwright/test";
 
 export class book {
   constructor(private page: Page) {}
-
-  // async updateDetailPicklistByLabel(label: string, value: string) {
-  //   const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  //   const row = this.page.locator("tr").filter({
-  //     has: this.page.locator("label", {
-  //       hasText: new RegExp(`^\\s*${escapedLabel}\\s*$`),
-  //     }),
-  //   });
-
-  //   await expect(row).toBeVisible();
-
-  //   const valueCell = row.locator(".rs_col_2");
-  //   await row.scrollIntoViewIfNeeded();
-  //   await row.hover();
-  //   await valueCell.hover();
-
-  //   const editIcon = row.locator(".fa-edit");
-  //   await expect(editIcon).toBeAttached();
-  //   if (await editIcon.isVisible()) {
-  //     await editIcon.click();
-  //   } else {
-  //     await editIcon.evaluate((element: HTMLElement) => element.click());
-  //   }
-
-  //   const dropdown = row.locator(".select2-selection");
-  //   await expect(dropdown).toBeVisible();
-  //   await dropdown.click();
-
-  //   await this.page.locator(".select2-container--open").getByRole("treeitem", {
-  //     name: value,
-  //     exact: true,
-  //   }).click();
-
-  //   await row.locator(/.submiticonSummary/).click();
-
-  //   await expect(valueCell).toContainText(value);
-  // }
+  
   async updateDetailPicklistByLabel(label: string, value: string) {
     const row = this.page.locator("tr").filter({
       has: this.page.locator("label", {
@@ -46,16 +10,24 @@ export class book {
       }),
     });
  
-    await expect(row).toBeVisible();
- 
-    const valueCell = row.locator(".rs_col_2");
-    await valueCell.hover();
- 
-    const editIcon = row.locator(".fa-edit");
-    await editIcon.click({ force: true });
- 
-    const dropdown = row.locator(".select2-selection");
-    await expect(dropdown).toBeVisible();
+    const detailRow = row.first();
+    await expect(detailRow).toBeVisible({ timeout: 25_000 });
+    await this.page.locator("#livewireOverly").waitFor({ state: "hidden", timeout: 8_000 }).catch(() => {});
+
+    const valueCell = detailRow.locator(".rs_col_2");
+    await detailRow.scrollIntoViewIfNeeded();
+    await valueCell.hover({ force: true });
+
+    const editIcon = detailRow.locator(".fa-edit").first();
+    await expect(editIcon).toHaveCount(1, { timeout: 25_000 });
+    await editIcon.evaluate((el) => {
+      const w = window as Window & { ClickPencilIcon?: (n: Element) => void };
+      if (typeof w.ClickPencilIcon === "function") w.ClickPencilIcon(el);
+      else (el as HTMLElement).click();
+    });
+
+    const dropdown = detailRow.locator(".select2-selection");
+    await expect(dropdown).toBeVisible({ timeout: 10_000 });
     await dropdown.click();
  
     await this.page.getByRole("treeitem", {
@@ -63,7 +35,7 @@ export class book {
       exact: true,
     }).click();
  
-    await this.clickSubmitIcon(row);
+    await this.clickSubmitIcon(detailRow);
  
     await expect(valueCell).toContainText(value);
   }
@@ -84,7 +56,10 @@ async clickSearchIconByLabel(label: string) {
   await expect(searchIcon).toBeVisible();
   await searchIcon.click();
 }
-
+async fillEmail(value:string){{
+  await this.page.locator('[fieldname="Email"]').fill(value);
+}
+}
 // async editIcon(){
 //               await this.page.getByRole('button', { name: 'edit_square' }).click();
 
@@ -103,4 +78,5 @@ async clickSearchIconByLabel(label: string) {
     const editIcon = row.locator(".related-link");
     await editIcon.click({ force: true });
   }
+  
 }

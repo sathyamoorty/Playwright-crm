@@ -5,9 +5,14 @@ export class DashboardPage {
     constructor(private page: Page) {}  
 
     async profileIcon(){
-        await this.page.locator("#livewireOverly").waitFor({ state: "hidden", timeout: 15000 }).catch(() => {});
+      // await this.page.locator("#livewireOverly").waitFor({ state: "hidden", timeout: 15000 }).catch(() => {});
+      //      await this.page.locator('.dropdown-toggle.nav-link.dropdown-user-link').click();
+      await this.page.locator('#livewireOverly').waitFor({ state: 'hidden', timeout: 20000 }).catch(() => {});
+      const profileMenu = this.page.locator('.dropdown-toggle.nav-link.dropdown-user-link').first();
+      await profileMenu.click({ force: true, timeout: 30000 });
+        // await this.page.locator("#livewireOverly").waitFor({ state: "hidden", timeout: 15000 }).catch(() => {});
           //await expect(this.page).toHaveURL(/\/admin\/Dashboard/i);
-        await this.page.locator('.dropdown-toggle.nav-link.dropdown-user-link').first().click();
+        // await this.page.locator('.dropdown-toggle.nav-link.dropdown-user-link').first().click();
          // await this.page.getByText('settings', { exact: true }).click();
   //          const profileMenu = this.page
   //   .getByRole("listitem")

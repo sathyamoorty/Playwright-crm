@@ -10,9 +10,25 @@ import { defineConfig } from '@playwright/test';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
+ *
+ * Pass slowMo via SLOW_MO when running (default 1200ms locally, 0 in CI).
+ * Examples (PowerShell):
+ *   $env:SLOW_MO=0;    npx playwright test tests/moduleNav.spec.ts --headed
+ *   $env:SLOW_MO=1200; npx playwright test tests/moduleNav.spec.ts --headed
+ * Or use npm scripts: test:module:fast (0ms) / test:module:slow (1200ms)
  */
+const slowMoMs =
+  process.env.SLOW_MO !== undefined
+    ? Number(process.env.SLOW_MO)
+    : process.env.CI
+      ? 0
+      : 1200;
+const isSlowRun = slowMoMs > 0;
+
 export default defineConfig({
   testDir: './tests',
+  timeout: isSlowRun ? 20 * 60 * 1000 : 10 * 60 * 1000,
+  expect: { timeout: isSlowRun ? 30_000 : 25_000 },
   // globalTeardown: './utils/sendreport.ts',
   /* Run tests in files in parallel */
   fullyParallel: false, // Can chage to true if you want to run tests in parallel
@@ -32,10 +48,12 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     headless: true,  // Set to false if you want to see the browser actions
-     launchOptions: {
+    actionTimeout: isSlowRun ? 60_000 : 30_000,
+    navigationTimeout: isSlowRun ? 90_000 : 60_000,
+    launchOptions: {
       args: ['--start-maximized'],
-      slowMo: process.env.SLOW_MO ? Number(process.env.SLOW_MO) : 1000,
-     },
+      slowMo: slowMoMs,
+    },
   },
 
   /* Configure projects for major browsers */
@@ -43,7 +61,11 @@ export default defineConfig({
     {
       name: 'chromium',
       use: {
-        viewport: null, // make : null
+        viewport: null,
+        launchOptions: {
+          args: ['--start-maximized'],
+          slowMo: slowMoMs,
+        },
       },
     },
 

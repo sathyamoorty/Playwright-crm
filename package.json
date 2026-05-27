@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:module": "playwright test tests/moduleNav.spec.ts",
+    "test:module": "playwright test tests/moduleNav.spec.ts --headed",
+    "test:module:fast": "playwright test tests/moduleNav.spec.ts",
+    "test:module:fast:headed": "playwright test tests/moduleNav.spec.ts --headed",
+    "test:fast:headed": "playwright test --headed",
+    "test:module:slow": "set SLOW_MO=1200&& playwright test tests/moduleNav.spec.ts --headed",
+    "test:module:tail": "playwright test tests/moduleNav-tail.spec.ts --headed",
     "report": "playwright show-report"
   },
   "keywords": [],
@@ -13,9 +18,9 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.59.1",  
     "@types/archiver": "^7.0.0",
-    "@types/node": "^25.6.2",
+    "@types/node": "^25.7.0",
     "@types/nodemailer": "^8.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"

@@ -9,11 +9,11 @@ export class detailView{
     }
     async clickSmspopupDropDown1(){
         await this.page.getByRole('combobox', { name: 'Select an option' }).first().click();
-        await this.page.getByRole('treeitem', { name: 'Alternat Phone (Leads)' }).click(); 
+        await this.page.getByRole('treeitem', { name: 'Phone number (Testing)' }).click(); 
     }
     async clickSmsPopupDropDown2(){
         await this.page.getByRole('combobox', { name: 'Select an option' }).first().click();
-        await this.page.getByRole('treeitem', { name: 'sample sms' }).click();
+        await this.page.getByRole('treeitem', { name: 'Test Temp' }).click();
         await this.page.getByRole('button', { name: 'Save' }).click();
     }
 }

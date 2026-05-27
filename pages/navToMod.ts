@@ -6,7 +6,7 @@ export class navToModule {
 
   async waitForAppReady() {
     await expect(this.page.locator("#livewireOverly")).toBeHidden({
-      timeout: 60000,
+      timeout: 80000,
     });
   }
 
@@ -22,7 +22,7 @@ export class navToModule {
   }
 
   async dynMod(index: number) {
-    const moduleName = modules[index];
+      const moduleName = modules[index];
 
     if (!moduleName) {
       throw new Error(`Module index ${index} not found in modules.json`);
@@ -51,8 +51,21 @@ export class navToModule {
     await this.waitForAppReady();
   }
 
-  async dynMicHeading(heading: string) {
-    await expect(this.page.getByRole('heading', { name: heading })).toBeVisible();
+  /**
+   * Wait for a page heading. Long titles (4+ words) match a regex prefix on the first two words
+   * so truncated UI labels (e.g. "Booking Informa…") still match "Booking Information …".
+   */
+  async dynMicHeading(heading: string, options?: { timeout?: number }) {
+    const timeout = options?.timeout ?? 25_000
+    const normalized = heading.trim().replace(/\s+/g, ' ')
+    const words = normalized.split(/\s+/)
+    const esc = (w: string) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const name =
+      words.length >= 4
+        ? new RegExp(`^${esc(words[0]!)}\\s+${esc(words[1]!)}`)
+        : new RegExp(`^${esc(normalized)}$`)
+
+    await expect(this.page.getByRole('heading', { name })).toBeVisible({ timeout })
   }
   async saveBtn() {
     await this.page.getByRole("button", { name: "Save", exact: true }).click();

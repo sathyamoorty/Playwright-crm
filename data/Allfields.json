@@ -1,0 +1,38 @@
+{
+    "fieldNames": [
+      "Assigned To",
+      "Description",
+      "Address",
+      "Email",
+      "Mobile Phone",
+      "Name",
+      "Industry name"
+    ],
+    "values": [
+      {
+        "1": "Sample text",
+        "2": "Ashok@rsoft.in",
+        "3": 2,
+        "4": "90303058240",
+        "5": "Description from the end user1",
+        "6": true,
+        "7": "17-05-2026",
+        "9": 2,
+        "10": "SEQ-001",
+        "11": "Test",
+        "15": 1,
+        "19": "17-05-2026 10:30",
+        "20": "10:30",
+        "21": "+91",
+        "22": "Ashok",
+        "23": "Mr.",
+        "24": 12345,
+        "25": 15000.5,
+        "26": "https://rsoft.in",
+        "29": 2,
+        "30": 2,
+        "31": 2
+      }
+    ]
+  }
+  

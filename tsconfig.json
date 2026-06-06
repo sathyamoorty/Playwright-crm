@@ -21,6 +21,8 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts",
+    "pages/**/*.ts",
+    "utils/**/*.ts",
     "playwright.config.ts",
     "scripts/**/*.mjs",
     "scripts/**/*.ts"

@@ -1,22 +1,34 @@
-// import { Page,expect } from "@playwright/test";
-// import { navToModule } from "./navToMod";
+import { Page } from "@playwright/test";
+import modulesNav from '../data/modules.json'
 
-// export class dashBoardNav{
-//     constructor (private page:Page){}
+export class dashBoardNav{
+    constructor (private page:Page){}
     
-//     async dashBoardNav(){
-//         const clk=new navToModule(this.page);
-//         await clk.waitForDashboardReady();
-//         const allEnquiryCard = this.page
-//             .getByText("All Enquiry", { exact: true })
-//             .locator("xpath=ancestor::div[contains(@class, 'clicko')][1]");
+    async openCardInNewPage(index:number, title:string): Promise<Page> {
+        const moduleName = modulesNav[index];
 
-//         await expect(allEnquiryCard).toBeVisible();
-//         await this.page.locator("#dashboardfilter").evaluate((input) => {
-//             (input as HTMLInputElement).value = "Same Tab";
-//         });
-//         await allEnquiryCard.click();
-//         await expect(this.page).toHaveURL(/Module=Enquiry/i);
-//         await clk.waitForAppReady();
-//     }
-// }
+        if (!moduleName) {
+            throw new Error(`Module index ${index} not found in modules.json`);
+        }
+
+        await this.page.locator('id=MoreMod_' + moduleName).click();
+
+        const [newPage] = await Promise.all([
+            this.page.context().waitForEvent('page'),
+            this.page.getByText(title, { exact: true }).click(),
+        ]);
+
+        await newPage.waitForLoadState('domcontentloaded');
+        this.page = newPage;
+        return newPage;
+    }
+    async openModule(index:number){
+        const moduleName = modulesNav[index];
+
+        if (!moduleName) {
+            throw new Error(`Module index ${index} not found in modules.json`);
+        }
+
+        await this.page.locator('id=MoreMod_' + moduleName).click();
+    }
+}

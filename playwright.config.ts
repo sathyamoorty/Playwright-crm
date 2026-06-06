@@ -55,7 +55,12 @@ export default defineConfig({
     actionTimeout: isSlowRun ? 60_000 : 30_000,
     navigationTimeout: isSlowRun ? 90_000 : 60_000,
     launchOptions: {
+    actionTimeout: isSlowRun ? 60_000 : 30_000,
+    navigationTimeout: isSlowRun ? 90_000 : 60_000,
+    launchOptions: {
       args: ['--start-maximized'],
+      slowMo: slowMoMs,
+    },
       slowMo: slowMoMs,
     },
   },
@@ -65,6 +70,11 @@ export default defineConfig({
     {
       name: 'chromium',
       use: {
+        viewport: null,
+        launchOptions: {
+          args: ['--start-maximized'],
+          slowMo: slowMoMs,
+        },
         viewport: null,
         launchOptions: {
           args: ['--start-maximized'],

@@ -1,7 +1,18 @@
-import { Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 
 export class WorkflowMessagePage {
   constructor(private page: Page) {}
+
+  private async pickSelect2Option(trigger: Locator, optionName: string) {
+    await trigger.click();
+    const option = this.page
+      .locator(".select2-container--open")
+      .getByRole("treeitem", { name: optionName, exact: true })
+      .first();
+    await expect(option).toBeVisible({ timeout: 15000 });
+    await option.click();
+    await this.page.locator(".select2-container--open").waitFor({ state: "hidden", timeout: 5000 }).catch(() => {});
+  }
 
   async otherSettings() {
      await this.page.locator('span').filter({ hasText: 'Other Settings' }).click();
@@ -42,20 +53,23 @@ export class WorkflowMessagePage {
 
   async step2() {
     const allConditions = this.page.locator("#content-andcon");
+    // await expect(allConditions).toBeVisible({ timeout: 15000 });
     await allConditions.getByRole("button", { name: "Add Condition" }).click();
 
-    const conditionField = allConditions
+    const fieldDropdown = allConditions
       .getByRole("textbox", { name: "Select an option", exact: true })
       .first();
+    await this.pickSelect2Option(fieldDropdown, "Assigned To");
 
-    await conditionField.click();
-
-    const searchOption = this.page.locator("input.select2-search__field").last();
-    await searchOption.fill("Assigned To");
-    await searchOption.press("Enter");
-
-    await this.page.getByRole("textbox", { name: "Select an option", exact: true }).click();
-    await this.page.getByRole("treeitem", { name: "Is", exact: true }).click();
+    const conditionRow = allConditions
+      .getByRole("row")
+      .filter({ has: this.page.getByRole("textbox", { name: "Assigned To", exact: true }) })
+      .first();
+    const operatorDropdown = conditionRow.getByRole("textbox", {
+      name: "Select an option",
+      exact: true,
+    });
+    await this.pickSelect2Option(operatorDropdown, "Is");
 
     await this.page.getByRole("button", { name: "Next" }).click();
   }
@@ -65,11 +79,21 @@ export class WorkflowMessagePage {
     await this.page.getByText("sms SMS").click();
     await this.page.locator("input[name='smstasktitle']").fill("Test SMS Task");
 
-    await this.page.getByRole("textbox", { name: "Select an Option", exact: true }).click();
-    await this.page.getByRole("treeitem", { name: /(Leads).*Alternat/i }).click();
+   
+   
+    
+    
+    // await this.page.getByRole("textbox", { name: "Select an Option", exact: true }).click();
+    // await this.page.locator('#select2-7hyb-container').click();
+    await this.page.locator('#generate_Workflow_sms').getByRole('combobox', { name: 'Select an Option', exact: true }).click();
+    await this.page.getByRole('treeitem', { name: '(Testing) Testing: (Phone' }).click();
+    // await this.page.getByRole("treeitem", { name: /Testing: (Phone number)/i }).click();
 
-    await this.page.getByRole("combobox", { name: "Select an option" }).first().click();
-    await this.page.getByRole("treeitem", { name: "Temp001" }).click();
+    // await this.page.getByRole("combobox", { name: "Select an option" }).first().click();
+    // await this.page.getByRole("treeitem", { name: "001" }).click();
+    await this.page.getByRole('combobox', { name: 'Select an option' }).first().click();
+    await this.page.getByRole('treeitem', { name: '001' }).click();
+ 
 
     await this.page.getByRole("button", { name: "Save" }).click();
     await expect(this.page.getByRole("button", { name: "Submit" })).toBeVisible();
@@ -88,7 +112,7 @@ export class WorkflowMessagePage {
   //         await toggle.click();
   //         console.log('Last workflow toggle clicked');
   //  }
-    async enableToggleByWorkflowName(workflowName: string) {
+  async enableToggleByWorkflowName(workflowName: string) {
   const workflowRow = this.page
     .locator('[class*="Removerow_"]')
     .filter({
@@ -103,14 +127,29 @@ export class WorkflowMessagePage {
   await expect(toggle).toBeVisible();
   await toggle.click();
 }
+  async clickEditIcon(workflowName: string) {
+  const workflowRow = this.page
+    .locator('[class*="Removerow_"]')
+    .filter({
+      has: this.page.getByText(workflowName, { exact: true }),
+    })
+    .first();
 
-         async clickEditIcon() {
-      const lastRow = this.page.locator('[class*="Removerow_"]').last();
-    const editIcon = lastRow.locator('span').filter({ hasText: 'edit_square' }).last();
+  await expect(workflowRow).toBeVisible({ timeout: 15000 });
+  await workflowRow.scrollIntoViewIfNeeded();
 
-      await expect(editIcon).toBeVisible();
-      await editIcon.click();
-} 
+  const editIcon = workflowRow.locator('span').filter({ hasText: 'edit_square' });
+  await expect(editIcon).toBeVisible();
+  await editIcon.click();
+}
+
+//          async clickEditIcon1() {
+//       const lastRow = this.page.locator('[class*="Removerow_"]').last();
+//     const editIcon = lastRow.locator('span').filter({ hasText: 'edit_square' }).last();
+
+//       await expect(editIcon).toBeVisible();
+//       await editIcon.click();
+// } 
 
   async whenToExecuteWorkFlow1() {
         await this.page.locator("input[type='radio'][value='2']").check();

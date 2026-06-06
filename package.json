@@ -1,12 +1,29 @@
 {
   "name": "rsoftcrm",
   "version": "1.0.0",
-  "description": "",
+  "description": "RSAUTOMATION Playwright enterprise test framework",
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:module": "playwright test tests/moduleNav.spec.ts",
-    "report": "playwright show-report"
+    "test:auth": "playwright test tests/auth",
+    "test:capture": "playwright test tests/capture",
+    "test:capture:headed": "playwright test tests/capture --headed",
+    "test:captureModules": "playwright test tests/capture/captureModules.spec.ts",
+    "test:captureModules:headed": "playwright test tests/capture/captureModules.spec.ts --headed",
+    "test:allModules": "playwright test tests/capture/allModules.spec.ts",
+    "test:allModules:headed": "playwright test tests/capture/allModules.spec.ts --headed",
+    "test:modules": "playwright test tests/modules",
+    "test:module": "playwright test tests/modules/moduleNav.spec.ts --headed",
+    "test:module:fast": "playwright test tests/modules/moduleNav.spec.ts",
+    "test:module:fast:headed": "playwright test tests/modules/moduleNav.spec.ts --headed",
+    "test:fast:headed": "playwright test --headed",
+    "test:module:slow": "set SLOW_MO=1200&& playwright test tests/modules/moduleNav.spec.ts --headed",
+    "test:module:tail": "playwright test tests/modules/moduleNav-tail.spec.ts --headed",
+    "test:workflows": "playwright test tests/workflows",
+    "test:quick-actions": "playwright test tests/quick-actions",
+    "report": "playwright show-report",
+    "report:flow": "start playwright-report/flow-execution-summary.html",
+    "report:export": "ts-node scripts/export-flow-report.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,13 +32,15 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/archiver": "^7.0.0",
-    "@types/node": "^25.6.2",
+    "@types/node": "^25.7.0",
     "@types/nodemailer": "^8.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
   "dependencies": {
     "archiver": "^8.0.0",
+    "docx": "^9.7.1",
+    "exceljs": "^4.4.0",
     "nodemailer": "^8.0.7"
   }
 }
